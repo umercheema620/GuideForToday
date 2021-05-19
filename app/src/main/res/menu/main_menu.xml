@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/dashboard"
+            android:title="@string/nav_home" />
+        <item
+            android:id="@+id/nav_search"
+            android:icon="@drawable/search_icon"
+            android:title="@string/nav_search" />
+        <item
+            android:id="@+id/nav_categories"
+            android:icon="@drawable/list"
+            android:title="@string/nav_categories" />
+        <item
+            android:id="@+id/nav_missing"
+            android:icon="@drawable/add_pointer"
+            android:title="@string/nav_missing" />
+    </group>
+
+    <item android:title="@string/nav_Profile">
+        <menu>
+
+            <group android:checkableBehavior="single">
+            <item
+                android:id="@+id/nav_login"
+                android:icon="@drawable/enter"
+                android:title="@string/nav_login" />
+            <item
+                android:id="@+id/nav_profile"
+                android:icon="@drawable/user"
+                android:title="@string/nav_Profile" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/logout"
+                android:title="@string/nav_logout" />
+
+        </group>
+        </menu>
+    </item>
+
+    <item android:title="@string/nav_share">
+        <menu>
+
+            <group android:checkableBehavior="none">
+                <item
+                    android:id="@+id/nav_share"
+                    android:icon="@drawable/share"
+                    android:title="@string/nav_share" />
+                <item
+                    android:id="@+id/nav_rate_us"
+                    android:icon="@drawable/review"
+                    android:title="@string/nav_rate" />
+
+            </group>
+        </menu>
+    </item>
+</menu>

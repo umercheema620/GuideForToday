@@ -1,0 +1,19 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorBlack</item>
+    </style>
+    
+    <style name="NavigationTheme">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorControlHighlight">@color/colorBlack</item>
+    </style>
+
+    <style name="CustomToolbarTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+    </style>
+
+</resources>

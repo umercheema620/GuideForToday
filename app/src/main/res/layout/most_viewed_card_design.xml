@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="150dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/CardColor"
+    app:cardCornerRadius="2dp"
+    android:layout_margin="10dp">
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp">
+        
+        <ImageView
+            android:id="@+id/most_image"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:src="@drawable/mcdonalds_pic"
+            android:scaleType="centerCrop"/>
+
+        <TextView
+            android:id="@+id/most_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mcdonald's"
+            android:textColor="@color/colorAccent"
+            android:layout_toEndOf="@+id/most_image"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/baloo"
+            android:textSize="20sp"/>
+        <RatingBar
+            android:id="@+id/most_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rating="3.5"
+            style="@style/Widget.AppCompat.RatingBar.Small"
+            android:layout_toEndOf="@+id/most_image"
+            android:layout_marginStart="10dp"
+            android:layout_below="@+id/most_title"
+            />
+
+        <TextView
+            android:id="@+id/most_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/feature_desc"
+            android:layout_toEndOf="@id/most_image"
+            android:padding="10dp"
+            android:layout_below="@id/most_rating"/>
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

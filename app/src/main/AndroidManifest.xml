@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.cityguide">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".Search" />
+        <activity android:name=".Featured_list" />
+        <activity android:name=".User.ChangePhone" />
+        <activity android:name=".User.ChangeEmail" />
+        <activity android:name=".User.ChangeName" />
+        <activity android:name=".User.Profile" />
+        <activity android:name=".place_list" />
+        <activity android:name=".Common.MapShow" />
+        <activity android:name=".AddPlace" />
+        <activity
+            android:name=".OnboardingClasses.onBoardingFragment4"
+            tools:ignore="Instantiatable" />
+        <activity android:name=".Common.LoginSignup.ForgotPassword" />
+        <activity android:name=".Common.LoginSignup.OTPVerify" />
+        <activity android:name=".Common.LoginSignup.Signup3" />
+        <activity android:name=".Common.LoginSignup.Signup2" />
+        <activity android:name=".Common.LoginSignup.Signup" />
+        <activity android:name=".Common.LoginSignup.Login" />
+        <activity android:name=".Common.LoginSignup.WelcomeScreen" />
+        <activity android:name=".User.Categories" />
+        <activity android:name=".Intro_Activity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".MainActivity" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBhrTjOJENk1CeSfTdsPDLQOqJUGa9dR7k" />
+    </application>
+
+</manifest>
