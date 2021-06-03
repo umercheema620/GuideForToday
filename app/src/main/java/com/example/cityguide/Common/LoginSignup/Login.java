@@ -49,6 +49,7 @@ public class Login extends AppCompatActivity {
     CheckBox rememberme;
     String comingfrom;
     FirebaseAuth mAuth;
+    double latitude,longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,8 @@ public class Login extends AppCompatActivity {
         phone1 = findViewById(R.id.logintext_phone);
         password1 = findViewById(R.id.logintext_password);
         mAuth = FirebaseAuth.getInstance();
+        latitude = getIntent().getDoubleExtra("latitude",0);
+        longitude = getIntent().getDoubleExtra("longitude",0);
 
         comingfrom = getIntent().getStringExtra("comingfrom");
 
@@ -81,7 +84,10 @@ public class Login extends AppCompatActivity {
     }
 
     public void SignUp(View view) {
-        startActivity(new Intent(getApplicationContext(), Signup.class));
+        Intent intent = new Intent(getApplicationContext(),Signup.class);
+        intent.putExtra("latitude",latitude);
+        intent.putExtra("longitude",longitude);
+        startActivity(intent);
     }
 
     public void letUserLogIn(View view) {

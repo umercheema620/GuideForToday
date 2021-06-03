@@ -27,9 +27,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.uber.sdk.android.core.UberSdk;
+import com.uber.sdk.core.auth.Scope;
+import com.uber.sdk.rides.client.SessionConfiguration;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

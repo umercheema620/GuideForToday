@@ -8,15 +8,15 @@
     tools:context=".MainActivity">
 
 
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigation_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:theme="@style/NavigationTheme"
-            android:background="@color/colorWhite"
-            app:headerLayout="@layout/menu_header"
-            app:menu="@menu/main_menu" />
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:theme="@style/NavigationTheme"
+        android:background="@color/colorWhite"
+        app:headerLayout="@layout/menu_header"
+        app:menu="@menu/main_menu" />
 
     <LinearLayout
         android:id="@+id/content"
@@ -339,6 +339,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/wish_list_area"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
@@ -368,10 +369,17 @@
 
                     </RelativeLayout>
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/wishlist_recyclerView"
+                    <ScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="170dp" />
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:id="@+id/wish_list_holder"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
+
+                    </ScrollView>
 
                 </LinearLayout>
             </LinearLayout>

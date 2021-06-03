@@ -3,15 +3,18 @@ package com.example.cityguide.Common.LoginSignup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
-import android.os.Build;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -23,18 +26,12 @@ import com.example.cityguide.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthOptions;
-import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hbb20.CountryCodePicker;
-
-import java.util.concurrent.TimeUnit;
 
 public class Signup3 extends AppCompatActivity {
 
@@ -43,6 +40,7 @@ public class Signup3 extends AppCompatActivity {
     CountryCodePicker country;
     TextInputLayout phoneNumber;
     ProgressBar progressBar;
+    double latitude, longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +52,10 @@ public class Signup3 extends AppCompatActivity {
         phoneNumber = findViewById(R.id.number);
         country = findViewById(R.id.country1);
         OtpButton = findViewById(R.id.signup3_next);
+        latitude = getIntent().getDoubleExtra("latitude",0);
+        longitude = getIntent().getDoubleExtra("longitude",0);
 
-        BackBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Signup3.super.onBackPressed();
-            }
-        });
+        BackBtn.setOnClickListener(view -> Signup3.super.onBackPressed());
 
     }
 
@@ -101,7 +96,7 @@ public class Signup3 extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 DatabaseReference rootNode = FirebaseDatabase.getInstance().getReference("Users");
 
-                UserHelperClass AddNewUser = new UserHelperClass(namesignup, usersignup, passwordsignup, emailsignup, phonesignup, gendersignup, datesignup);
+                UserHelperClass AddNewUser = new UserHelperClass(namesignup, usersignup, emailsignup, phonesignup, gendersignup, datesignup,latitude,longitude);
                 rootNode.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(AddNewUser).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

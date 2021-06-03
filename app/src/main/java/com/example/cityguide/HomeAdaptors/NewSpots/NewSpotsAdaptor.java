@@ -1,4 +1,4 @@
-package com.example.cityguide.HomeAdaptors.MostViewed;
+package com.example.cityguide.HomeAdaptors.NewSpots;
 
 import android.os.Build;
 import android.view.LayoutInflater;
@@ -23,11 +23,11 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+public class NewSpotsAdaptor extends FirebaseRecyclerAdapter<NewSpotsHelperClass, NewSpotsAdaptor.myviewholder> {
 
-public class MostViewedAdapter extends FirebaseRecyclerAdapter<MostViewedHelperClass, MostViewedAdapter.myviewholder> {
     int year,month,day;
 
-    public MostViewedAdapter(@NonNull FirebaseRecyclerOptions<MostViewedHelperClass> options,int year,int month,int day) {
+    public NewSpotsAdaptor(@NonNull FirebaseRecyclerOptions<NewSpotsHelperClass> options,int year,int month,int day) {
         super(options);
         this.year = year;
         this.month = month;
@@ -36,7 +36,7 @@ public class MostViewedAdapter extends FirebaseRecyclerAdapter<MostViewedHelperC
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    protected void onBindViewHolder(@NonNull myviewholder holder, int position, @NonNull MostViewedHelperClass model) {
+    protected void onBindViewHolder(@NonNull NewSpotsAdaptor.myviewholder holder, int position, @NonNull NewSpotsHelperClass model) {
         LocalDate current = LocalDate.of(this.year,this.month,this.day);
         LocalDate placedate = LocalDate.of(model.getYear(),model.getMonth(),model.getDay());
 
@@ -45,22 +45,24 @@ public class MostViewedAdapter extends FirebaseRecyclerAdapter<MostViewedHelperC
         if(days <= 3) {
             holder.newSpotCard.setVisibility(View.VISIBLE);
         }
-        holder.Placestitle.setText(model.getName());
-        holder.Placesdesc.setText(model.getDescription());
-        holder.mRatingBar.setRating(model.getRating());
-        Glide.with(holder.Placesimage.getContext()).load(model.getImageUrl()).into(holder.Placesimage);
 
-        holder.itemView.setOnClickListener(view -> {
-            AppCompatActivity activity = (AppCompatActivity) view.getContext();
-            activity.getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,new PlaceFragment(model.getName(),model.getImageUrl())).addToBackStack(null).commit();
-        });
+            holder.Placestitle.setText(model.getName());
+            holder.Placesdesc.setText(model.getDescription());
+            holder.mRatingBar.setRating(model.getRating());
+            Glide.with(holder.Placesimage.getContext()).load(model.getImageUrl()).into(holder.Placesimage);
+
+            holder.itemView.setOnClickListener(view -> {
+                AppCompatActivity activity = (AppCompatActivity) view.getContext();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, new PlaceFragment(model.getName(), model.getImageUrl())).addToBackStack(null).commit();
+            });
+
     }
 
     @NonNull
     @Override
-    public MostViewedAdapter.myviewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NewSpotsAdaptor.myviewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.most_viewed_card_design, parent, false);
-        return new MostViewedAdapter.myviewholder(view);
+        return new NewSpotsAdaptor.myviewholder(view);
     }
 
     class myviewholder extends RecyclerView.ViewHolder {

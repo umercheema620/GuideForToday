@@ -7,6 +7,8 @@
     app:cardBackgroundColor="@color/CardColor"
     app:cardCornerRadius="2dp"
     android:layout_margin="10dp">
+
+
     
     <RelativeLayout
         android:layout_width="match_parent"
@@ -29,7 +31,7 @@
             android:layout_toEndOf="@+id/most_image"
             android:layout_marginStart="10dp"
             android:fontFamily="@font/baloo"
-            android:textSize="20sp"/>
+            android:textSize="15sp"/>
         <RatingBar
             android:id="@+id/most_rating"
             android:layout_width="wrap_content"
@@ -48,7 +50,25 @@
             android:text="@string/feature_desc"
             android:layout_toEndOf="@id/most_image"
             android:padding="10dp"
+            android:textSize="12sp"
             android:layout_below="@id/most_rating"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/new_spot_card"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        android:background="@drawable/newspot">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="New Spot"
+            android:textColor="@color/colorWhite"/>
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

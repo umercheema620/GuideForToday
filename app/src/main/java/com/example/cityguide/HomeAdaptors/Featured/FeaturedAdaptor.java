@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ public class FeaturedAdaptor extends FirebaseRecyclerAdapter<FeaturedHelperClass
     protected void onBindViewHolder(@NonNull myviewholder holder, int position, @NonNull FeaturedHelperClass model) {
         holder.Featuredtitle.setText(model.getName());
         holder.Featureddesc.setText(model.getDescription());
+        holder.rating.setRating(model.getRating());
         Glide.with(holder.Featuredimage.getContext()).load(model.getImageUrl()).into(holder.Featuredimage);
 
         holder.itemView.setOnClickListener(view -> {
@@ -44,11 +46,13 @@ public class FeaturedAdaptor extends FirebaseRecyclerAdapter<FeaturedHelperClass
     class myviewholder extends RecyclerView.ViewHolder{
         ImageView Featuredimage;
         TextView Featuredtitle, Featureddesc;
+        RatingBar rating;
         public myviewholder(@NonNull View itemView) {
             super(itemView);
             Featuredimage = itemView.findViewById(R.id.featured_image);
             Featuredtitle = itemView.findViewById(R.id.featured_title);
             Featureddesc = itemView.findViewById(R.id.featured_description);
+            rating = itemView.findViewById(R.id.featured_rating);
         }
     }
 

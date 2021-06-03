@@ -28,7 +28,7 @@ public class Signup2 extends AppCompatActivity {
     ImageView BackBtn;
     TextView signupText;
     Button nextButton, loginbtn;
-
+    double latitude,longitude;
     RadioGroup radioGroup;
     DatePicker datePicker;
     RadioButton selectGender;
@@ -45,14 +45,11 @@ public class Signup2 extends AppCompatActivity {
 
         radioGroup = findViewById(R.id.radio_signup);
         datePicker = findViewById(R.id.date_signup);
+        latitude = getIntent().getDoubleExtra("latitude",0);
+        longitude = getIntent().getDoubleExtra("longitude",0);
 
 
-        BackBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Signup2.super.onBackPressed();
-            }
-        });
+        BackBtn.setOnClickListener(view -> Signup2.super.onBackPressed());
     }
 
     public void CallnextSignup(View view) {
@@ -83,6 +80,8 @@ public class Signup2 extends AppCompatActivity {
         intent.putExtra("passwordS",passwordsignup);
         intent.putExtra("genderS", gendersignup);
         intent.putExtra("dateS", datesignup);
+        intent.putExtra("latitude",latitude);
+        intent.putExtra("longitude",longitude);
 
         Pair[] pairs = new Pair[4];
 
@@ -91,14 +90,10 @@ public class Signup2 extends AppCompatActivity {
         pairs[2] = new Pair<View, String>(nextButton, "transition_signup3_next_btn");
         pairs[3] = new Pair<View, String>(loginbtn, "transition_signup3_login_btn");
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(Signup2.this, pairs);
-            startActivity(intent, options.toBundle());
-            finish();
-        } else {
-            startActivity(intent);
-            finish();
-        }
+
+        startActivity(intent);
+        finish();
+
     }
 
     private boolean CheckGender() {

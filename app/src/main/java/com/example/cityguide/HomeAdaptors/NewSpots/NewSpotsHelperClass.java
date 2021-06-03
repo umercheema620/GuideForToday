@@ -1,14 +1,14 @@
-package com.example.cityguide.HomeAdaptors.MostViewed;
+package com.example.cityguide.HomeAdaptors.NewSpots;
 
-public class MostViewedHelperClass {
+public class NewSpotsHelperClass {
 
     String name,description,imageUrl;
     float rating;
     int year,month,day;
 
-    MostViewedHelperClass(){}
+    NewSpotsHelperClass(){}
 
-    public MostViewedHelperClass(String name,String description,String imageUrl,float rating,int year,int month,int day) {
+    public NewSpotsHelperClass(String name,String description,String imageUrl,float rating,int year,int month,int day) {
         this.imageUrl = imageUrl;
         this.name = name;
         this.description = description;

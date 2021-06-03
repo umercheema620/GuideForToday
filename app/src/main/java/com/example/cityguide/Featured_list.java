@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.cityguide.HomeAdaptors.Places.PlacesAdaptor;
+import com.example.cityguide.HomeAdaptors.Places.PlacesAdaptor2;
 import com.example.cityguide.HomeAdaptors.Places.PlacesHelperClass;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.FirebaseDatabase;
@@ -16,7 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class Featured_list extends AppCompatActivity {
 
     RecyclerView PlaceList;
-    PlacesAdaptor PlaceListAdaptor;
+    PlacesAdaptor2 PlaceListAdaptor;
     double latitude,longitude;
 
     @Override
@@ -34,7 +35,7 @@ public class Featured_list extends AppCompatActivity {
                 new FirebaseRecyclerOptions.Builder<PlacesHelperClass>()
                         .setQuery(FirebaseDatabase.getInstance().getReference().child("Places"),PlacesHelperClass.class)
                         .build();
-        PlaceListAdaptor = new PlacesAdaptor(options,latitude,longitude);
+        PlaceListAdaptor = new PlacesAdaptor2(options,latitude,longitude);
         PlaceList.setAdapter(PlaceListAdaptor);
     }
 

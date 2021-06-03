@@ -1,7 +1,10 @@
 package com.example.cityguide.Database;
 
+import java.time.LocalDate;
+
 public class PlaceHelperClass {
     private String name,category,location,imageUrl,description, latitude,longitude,user;
+    private int year,month,day;
 
     public String getLatitude() {
         return latitude;
@@ -21,7 +24,7 @@ public class PlaceHelperClass {
 
     public PlaceHelperClass(){}
 
-    public PlaceHelperClass(String name, String description,String imageUrl,String category, String location, String latitude, String longitude,String user) {
+    public PlaceHelperClass(String name, String description,String imageUrl,String category, String location, String latitude, String longitude,String user, int year, int month, int day) {
         this.name = name;
         this.category = category;
         this.location = location;
@@ -30,8 +33,34 @@ public class PlaceHelperClass {
         this.latitude = latitude;
         this.longitude = longitude;
         this.user = user;
+        this.year = year;
+        this.month = month;
+        this.day = day;
     }
 
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
 
     public String getUser() {
         return user;

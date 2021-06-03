@@ -2,18 +2,20 @@ package com.example.cityguide.Database;
 
 public class UserHelperClass {
 
-    String name,username,password,email,phone,gender,date;
+    String name,username,email,phone,gender,date;
+    double longitude,latitude;
 
     public UserHelperClass(){}
 
-    public UserHelperClass(String name, String username, String password, String email, String phone, String gender, String date) {
+    public UserHelperClass(String name, String username,String email, String phone, String gender, String date,double latitude,double longitude) {
         this.name = name;
         this.username = username;
-        this.password = password;
         this.email = email;
         this.phone = phone;
         this.gender = gender;
         this.date = date;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getName() {
@@ -22,22 +24,6 @@ public class UserHelperClass {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getEmail() {
@@ -54,6 +40,30 @@ public class UserHelperClass {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getGender() {

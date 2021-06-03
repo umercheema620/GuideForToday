@@ -24,7 +24,7 @@ public class Signup extends AppCompatActivity {
     ImageView BackBtn;
     TextView signupText;
     Button nextButton, loginbtn;
-
+    double latitude,longitude;
     TextInputLayout name, username, email, password;
 
 
@@ -42,13 +42,12 @@ public class Signup extends AppCompatActivity {
         username = findViewById(R.id.signup_username);
         email = findViewById(R.id.signup_email);
         password = findViewById(R.id.signup_password);
+        latitude = getIntent().getDoubleExtra("latitude",0);
+        longitude = getIntent().getDoubleExtra("longitude",0);
 
-        BackBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), WelcomeScreen.class));
-                finish();
-            }
+        BackBtn.setOnClickListener(view -> {
+            startActivity(new Intent(getApplicationContext(), WelcomeScreen.class));
+            finish();
         });
 
     }
@@ -70,6 +69,8 @@ public class Signup extends AppCompatActivity {
         intent.putExtra("userS", usersignup);
         intent.putExtra("emailS", emailsignup);
         intent.putExtra("passwordS",passwordsignup);
+        intent.putExtra("latitude",latitude);
+        intent.putExtra("longitude",longitude);
 
         Pair[] pairs = new Pair[4];
 
@@ -78,14 +79,10 @@ public class Signup extends AppCompatActivity {
         pairs[2] = new Pair<View, String>(nextButton, "transition_signup1_next_btn");
         pairs[3] = new Pair<View, String>(loginbtn, "transition_signup1_login_btn");
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(Signup.this, pairs);
-            startActivity(intent, options.toBundle());
-            finish();
-        } else {
-            startActivity(intent);
-            finish();
-        }
+
+        startActivity(intent);
+        finish();
+
 
     }
 

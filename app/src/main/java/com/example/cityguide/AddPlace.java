@@ -52,6 +52,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class AddPlace extends AppCompatActivity implements LocationListener {
@@ -71,6 +77,7 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
     public double latitude, longitude;
     boolean isPermissionGranted;
     LocationManager mLocationManager;
+    int year,month,date;
 
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -98,7 +105,6 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
         userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         checkAppPermission();
-        new GetMap().execute();
 
         Criteria cri = new Criteria();
         String provider = mLocationManager.getBestProvider(cri, false);
@@ -115,6 +121,11 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
             Toast.makeText(this, "Provider null", Toast.LENGTH_SHORT).show();
         }
 
+        Calendar cal = Calendar.getInstance();
+        year = cal.get(Calendar.YEAR);
+        month = cal.get(Calendar.MONTH) + 1;
+        date = cal.get(Calendar.DAY_OF_MONTH);
+
         String[] options = {"Gaming", "Restaurant", "Gym", "Monument","Cinema", "Mosque", "Park", "Ice-cream Parlor","hospital", "other"};
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.option_item, options);
         categories.setText(arrayAdapter.getItem(0).toString(), false);
@@ -128,7 +139,6 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
         editplaceN.setText(placename);
         editplaceD.setText(placedescription);
         editplaceC.setText(placecategory);
-
 
     }
 
@@ -176,7 +186,7 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
         String count = "0";
         StorageReference image = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageuri));
         image.putFile(imageuri).addOnSuccessListener(taskSnapshot -> image.getDownloadUrl().addOnSuccessListener(uri -> {
-            PlaceHelperClass AddNewUser = new PlaceHelperClass(placename,placedescription,uri.toString(),placecategory,location,lat1,lang1,userid);
+            PlaceHelperClass AddNewUser = new PlaceHelperClass(placename,placedescription,uri.toString(),placecategory,location,lat1,lang1,userid,year,month,date);
             rootNode.child(placename).setValue(AddNewUser);
             Toast.makeText(AddPlace.this, "Uploaded Successfully", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
@@ -232,39 +242,5 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
     public void onLocationChanged(@NonNull Location location) {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-    }
-
-    private class GetMap extends AsyncTask<Void,Void,Bitmap> {
-
-        @Override
-        protected Bitmap doInBackground(Void... voids) {
-            Bitmap image2 = null;
-
-            try {
-                URL mapurl = new URL("https://maps.googleapis.com/maps/api/staticmap?" +
-                        "center="+"31.468578"+ "," + "74.8475783" +
-                        "&zoom=17" +
-                        "&size=600x600" +
-                        "&maptype=roadmap" +
-                        "&key=AIzaSyBhrTjOJENk1CeSfTdsPDLQOqJUGa9dR7k");
-
-                InputStream stream =
-                        (InputStream) mapurl.openConnection().getContent();
-
-                image2 = BitmapFactory.decodeStream(stream);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return image2;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-
-            image.setImageBitmap(bitmap);
-        }
     }
 }

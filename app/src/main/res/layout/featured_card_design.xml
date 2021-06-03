@@ -28,9 +28,10 @@
             android:fontFamily="@font/baloo"
             android:text="Mcdonald's"
             android:textColor="#3b4347"
-            android:textSize="20sp" />
+            android:textSize="15sp" />
 
         <RatingBar
+            android:id="@+id/featured_rating"
             style="@style/Widget.AppCompat.RatingBar.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,6 +41,8 @@
             android:id="@+id/featured_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginBottom="10dp"
             android:text="@string/feature_desc" />
     </LinearLayout>
 
