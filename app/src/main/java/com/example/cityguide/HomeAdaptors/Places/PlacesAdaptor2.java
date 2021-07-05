@@ -1,5 +1,7 @@
 package com.example.cityguide.HomeAdaptors.Places;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.cityguide.PlaceFragment;
+import com.example.cityguide.HomeAdaptors.Featured.FeaturedHelperClass;
+import com.example.cityguide.PlaceData;
 import com.example.cityguide.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -19,17 +22,19 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
-public class PlacesAdaptor2 extends FirebaseRecyclerAdapter<PlacesHelperClass,PlacesAdaptor2.myviewholder> {
+public class PlacesAdaptor2 extends FirebaseRecyclerAdapter<FeaturedHelperClass,PlacesAdaptor2.myviewholder> {
 
     double latitude,longitude;
-    public PlacesAdaptor2(@NonNull FirebaseRecyclerOptions<PlacesHelperClass> options, double latitude, double longitude) {
+    Context context;
+    public PlacesAdaptor2(@NonNull FirebaseRecyclerOptions<FeaturedHelperClass> options, double latitude, double longitude, Context context) {
         super(options);
         this.latitude = latitude;
         this.longitude = longitude;
+        this.context =context;
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull myviewholder holder, int position, @NonNull PlacesHelperClass model) {
+    protected void onBindViewHolder(@NonNull myviewholder holder, int position, @NonNull FeaturedHelperClass model) {
 
         DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
@@ -58,8 +63,13 @@ public class PlacesAdaptor2 extends FirebaseRecyclerAdapter<PlacesHelperClass,Pl
         Glide.with(holder.Placesimage.getContext()).load(model.getImageUrl()).into(holder.Placesimage);
 
         holder.itemView.setOnClickListener(view -> {
-            AppCompatActivity activity = (AppCompatActivity) view.getContext();
-            activity.getSupportFragmentManager().beginTransaction().replace(R.id.feature_list,new PlaceFragment(model.getName(),model.getImageUrl())).addToBackStack(null).commit();
+            Intent intent = new Intent(context, PlaceData.class);
+            intent.putExtra("name",model.getName());
+            intent.putExtra("image", model.getImageUrl());
+            intent.putExtra("category", model.getCategory());
+            intent.putExtra("latitude",model.getLatitude());
+            intent.putExtra("longitude",model.getLongitude());
+            context.startActivity(intent);
         });
     }
 

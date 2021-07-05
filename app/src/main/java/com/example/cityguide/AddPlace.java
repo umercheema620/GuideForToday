@@ -22,6 +22,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
@@ -37,8 +38,11 @@ import com.example.cityguide.Database.Remember2;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.karumi.dexter.Dexter;
@@ -50,12 +54,15 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -74,11 +81,16 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
     StorageReference storageReference;
     ProgressBar progressBar;
     private DatabaseReference rootNode = FirebaseDatabase.getInstance().getReference("Review");
+    private DatabaseReference notification = FirebaseDatabase.getInstance().getReference("Users");
     public double latitude, longitude;
     boolean isPermissionGranted;
     LocationManager mLocationManager;
-    int year,month,date;
-
+    int year,month,date,approve=0,disapprove=0,voted=0;
+    DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference usersdRef = rootRef.child("Users");
+    ArrayList<Double> array = new ArrayList<>();
+    ArrayList<Double> array2 = new ArrayList<>();
+    ArrayList<String> array3 = new ArrayList<>();
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
@@ -120,6 +132,7 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
         }else{
             Toast.makeText(this, "Provider null", Toast.LENGTH_SHORT).show();
         }
+
 
         Calendar cal = Calendar.getInstance();
         year = cal.get(Calendar.YEAR);
@@ -183,10 +196,66 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
     }
 
     private void uploadImage(Uri imageuri) {
+        ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    double latitude = ds.child("latitude").getValue(double.class);
+                    array.add(latitude);
+                    double longitude = ds.child("longitude").getValue(double.class);
+                    array2.add(longitude);
+                    array3.add(ds.getKey());
+                }
+                if (lat1 != null) {
+                    for (int i = 0; i < array.size(); i++) {
+                        String uid = array3.get(i);
+
+                        DecimalFormat df = new DecimalFormat("#.#");
+                        df.setRoundingMode(RoundingMode.CEILING);
+                        float pk = (float) (180.0f / Math.PI);
+
+                        float a1 = array.get(i).floatValue() / pk;
+                        float a2 = array2.get(i).floatValue() / pk;
+
+                        float str1 = Float.parseFloat(lat1);
+                        float str2 = Float.parseFloat(lang1);
+
+                        float b1 = str1 / pk;
+                        float b2 = str2 / pk;
+
+                        double t1 = Math.cos(a1) * Math.cos(a2) * Math.cos(b1) * Math.cos(b2);
+                        double t2 = Math.cos(a1) * Math.sin(a2) * Math.cos(b1) * Math.sin(b2);
+                        double t3 = Math.sin(a1) * Math.sin(b1);
+                        double tt = Math.acos(t1 + t2 + t3);
+
+                        double value = (6366000 * tt) / 1000;
+                        String value2 = df.format(value);
+
+                        if(Double.parseDouble(value2) <= 10){
+                            StorageReference image = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageuri));
+                            image.putFile(imageuri).addOnSuccessListener(taskSnapshot -> image.getDownloadUrl().addOnSuccessListener(uri ->{
+                                PlaceHelperClass AddNewUser = new PlaceHelperClass(placename,placedescription,uri.toString(),placecategory,location,lat1,lang1,userid,year,month,date,approve,disapprove,voted);
+                                notification.child(uid).child("notification").child(placename).setValue(AddNewUser);
+                            }));
+                        }
+
+                        System.out.println("Distance" + i + ":" + value2);
+                    }
+                }
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        usersdRef.addListenerForSingleValueEvent(eventListener);
+
         String count = "0";
         StorageReference image = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageuri));
         image.putFile(imageuri).addOnSuccessListener(taskSnapshot -> image.getDownloadUrl().addOnSuccessListener(uri -> {
-            PlaceHelperClass AddNewUser = new PlaceHelperClass(placename,placedescription,uri.toString(),placecategory,location,lat1,lang1,userid,year,month,date);
+            PlaceHelperClass AddNewUser = new PlaceHelperClass(placename,placedescription,uri.toString(),placecategory,location,lat1,lang1,userid,year,month,date,approve,disapprove,voted);
             rootNode.child(placename).setValue(AddNewUser);
             Toast.makeText(AddPlace.this, "Uploaded Successfully", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(getApplicationContext(),MainActivity.class));

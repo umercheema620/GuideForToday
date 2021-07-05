@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/CardColor"
+    app:cardCornerRadius="2dp"
+    android:layout_margin="10dp">
+
+    <RelativeLayout
+        android:id="@+id/placecard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/not_image"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/notification"
+            android:scaleType="centerCrop"/>
+
+        <TextView
+            android:id="@+id/not_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Review Nearby Place"
+            android:textColor="@color/colorBlack"
+            android:layout_toEndOf="@+id/not_image"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/muli_bold"
+            android:textSize="20sp"
+            android:layout_toRightOf="@+id/not_image"
+            android:layout_marginLeft="10dp" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

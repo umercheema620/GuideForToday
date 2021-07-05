@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public class PlaceHelperClass {
     private String name,category,location,imageUrl,description, latitude,longitude,user;
     private int year,month,day;
+    public int approve,disapprove,voted;
 
     public String getLatitude() {
         return latitude;
@@ -24,7 +25,7 @@ public class PlaceHelperClass {
 
     public PlaceHelperClass(){}
 
-    public PlaceHelperClass(String name, String description,String imageUrl,String category, String location, String latitude, String longitude,String user, int year, int month, int day) {
+    public PlaceHelperClass(String name, String description,String imageUrl,String category, String location, String latitude, String longitude,String user, int year, int month, int day,int approve, int disapprove, int voted) {
         this.name = name;
         this.category = category;
         this.location = location;
@@ -36,6 +37,33 @@ public class PlaceHelperClass {
         this.year = year;
         this.month = month;
         this.day = day;
+        this.approve = approve;
+        this.disapprove = disapprove;
+        this.voted = voted;
+    }
+
+    public int getApprove() {
+        return approve;
+    }
+
+    public void setApprove(int approve) {
+        this.approve = approve;
+    }
+
+    public int getDisapprove() {
+        return disapprove;
+    }
+
+    public void setDisapprove(int disapprove) {
+        this.disapprove = disapprove;
+    }
+
+    public int getVoted() {
+        return voted;
+    }
+
+    public void setVoted(int voted) {
+        this.voted = voted;
     }
 
     public int getYear() {

@@ -1,9 +1,9 @@
 package com.example.cityguide;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
@@ -16,10 +16,10 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.GradientDrawable;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -35,7 +35,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,33 +42,23 @@ import com.example.cityguide.Common.CategoriesFunction;
 import com.example.cityguide.Common.Internet;
 import com.example.cityguide.Common.LoginSignup.Login;
 import com.example.cityguide.Common.LoginSignup.WelcomeScreen;
-import com.example.cityguide.Database.PlaceHelperClass;
-import com.example.cityguide.Database.Remember2;
 import com.example.cityguide.Database.SessionManager;
 import com.example.cityguide.HomeAdaptors.Categories.CategoriesAdaptor;
 import com.example.cityguide.HomeAdaptors.Categories.CategoriesHelperClass;
 import com.example.cityguide.HomeAdaptors.Featured.FeaturedAdaptor;
 import com.example.cityguide.HomeAdaptors.Featured.FeaturedHelperClass;
 import com.example.cityguide.HomeAdaptors.MostViewed.MostViewedAdapter;
-import com.example.cityguide.HomeAdaptors.MostViewed.MostViewedHelperClass;
-import com.example.cityguide.HomeAdaptors.NewSpots.NewSpotsAdaptor;
-import com.example.cityguide.HomeAdaptors.NewSpots.NewSpotsHelperClass;
-import com.example.cityguide.HomeAdaptors.ProfileHelperClass;
-import com.example.cityguide.HomeAdaptors.WishList.WishListAdapter;
-import com.example.cityguide.HomeAdaptors.WishList.WishListHelperClass;
 import com.example.cityguide.User.Categories;
 import com.example.cityguide.User.ChatBot;
+import com.example.cityguide.User.Notification;
 import com.example.cityguide.User.Profile;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -78,10 +67,9 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LocationListener {
@@ -93,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DatabaseReference placeadded;
     ImageView menuIcon;
     LinearLayout contentView;
-    double latitude,longitude;
+    double latitude, longitude;
     LocationManager mLocationManager;
     private LinearLayout wishListHolder;
     String count;
@@ -124,9 +112,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         SessionManager sessionManager = new SessionManager(getApplicationContext());
 
+        mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = mLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            }
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        onLocationChanged(bestLocation);
+
         if (sessionManager.checkLogin()) {
 
-            LayoutInflater inflater = (LayoutInflater)getApplicationContext().getSystemService
+            LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService
                     (Context.LAYOUT_INFLATER_SERVICE);
 
             // Getting the wish list
@@ -154,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             ((TextView) view.findViewById(R.id.most_title)).setText(place.get("name").toString());
                             ((TextView) view.findViewById(R.id.most_description)).setText(place.get("description").toString());
-                            System.out.println(place.get("rating"));
 
                             MainActivity.LoadImageURL loadImageURL = new MainActivity.LoadImageURL((ImageView) view.findViewById(R.id.most_image));
                             loadImageURL.execute(place.get("imageUrl").toString());
@@ -166,7 +170,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             view.setClickable(true);
                             view.setOnClickListener(v -> {
-                                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,new PlaceFragment(place.get("name").toString(), place.get("imageUrl").toString())).addToBackStack(null).commit();
+                                Intent intent = new Intent(getApplicationContext(), PlaceData.class);
+                                intent.putExtra("name",place.get("name").toString());
+                                intent.putExtra("image", place.get("imageUrl").toString());
+                                intent.putExtra("category", place.get("category").toString());
+                                intent.putExtra("latitude", place.get("latitude").toString());
+                                intent.putExtra("longitude", place.get("longitude").toString());
+                                startActivity(intent);
                             });
 
                             wishListHolder.addView(view);
@@ -177,8 +187,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }).addOnFailureListener(e -> {
                 Toast.makeText(getApplication(), "failure", Toast.LENGTH_SHORT).show();
             });
-        }
-        else {
+        } else {
             findViewById(R.id.wish_list_area).setVisibility(View.GONE);
         }
         //Drawer Menu Hooks
@@ -187,27 +196,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Internet object = new Internet();
 
-        if(!object.Connected(this)){
+        if (!object.Connected(this)) {
             showCustomDialog();
         }
 
         checkAppPermission();
 
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        Criteria cri = new Criteria();
-        String provider = mLocationManager.getBestProvider(cri, false);
-        if (provider != null && !provider.equals("")) {
-            Location location1 = mLocationManager.getLastKnownLocation(provider);
-            mLocationManager.requestLocationUpdates(provider,2000,1,this);
-            if(location1 != null){
-                onLocationChanged(location1);
-            }
-            else {
-                Toast.makeText(this, "location not found", Toast.LENGTH_SHORT).show();
-            }
-        }else{
-        }
 
         findViewById(R.id.search_bar_layout).setOnClickListener(v -> {
             startActivity(new Intent(this, SearchActivity.class));
@@ -390,12 +385,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mostViewedRecyclerView.setHasFixedSize(true);
         mostViewedRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        FirebaseRecyclerOptions<MostViewedHelperClass> options =
-                new FirebaseRecyclerOptions.Builder<MostViewedHelperClass>()
-                        .setQuery(FirebaseDatabase.getInstance().getReference().child("Places"),MostViewedHelperClass.class)
+        FirebaseRecyclerOptions<FeaturedHelperClass> options =
+                new FirebaseRecyclerOptions.Builder<FeaturedHelperClass>()
+                        .setQuery(FirebaseDatabase.getInstance().getReference().child("Places"),FeaturedHelperClass.class)
                         .build();
 
-        Madaptor = new MostViewedAdapter(options,year,month,date);
+        Madaptor = new MostViewedAdapter(options,year,month,date,MainActivity.this);
         mostViewedRecyclerView.setAdapter(Madaptor);
     }
 
@@ -407,7 +402,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 new FirebaseRecyclerOptions.Builder<FeaturedHelperClass>()
                 .setQuery(FirebaseDatabase.getInstance().getReference().child("Places"),FeaturedHelperClass.class)
                 .build();
-        Fadaptor = new FeaturedAdaptor(options);
+        Fadaptor = new FeaturedAdaptor(options,MainActivity.this);
         featuredRecyclerView.setAdapter(Fadaptor);
     }
 
@@ -460,7 +455,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(getApplicationContext(), ChatBot.class));
                 break;
             case R.id.nav_search:
-                startActivity(new Intent(getApplicationContext(),Search.class));
+                startActivity(new Intent(getApplicationContext(),SearchActivity.class));
                 break;
             case R.id.nav_logout:
                 SessionManager session = new SessionManager(MainActivity.this);
@@ -501,6 +496,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_profile:
                 Intent intent2 = new Intent(getApplicationContext(), Profile.class);
                 startActivity(intent2);
+                break;
+            case R.id.nav_notifications:
+                startActivity(new Intent(getApplicationContext(), Notification.class));
                 break;
         }
 

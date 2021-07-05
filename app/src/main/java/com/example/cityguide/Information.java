@@ -1,10 +1,8 @@
 package com.example.cityguide;
 
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -19,53 +17,44 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.cityguide.Database.SessionManager;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
-import com.uber.sdk.android.core.UberSdk;
-import com.uber.sdk.core.auth.Scope;
-import com.uber.sdk.rides.client.SessionConfiguration;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class PlaceFragment extends Fragment {
+
+public class Information extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     private String mParam1;
     private String mParam2;
-
-    private String name,imageurl, category, description;
     private float rating;
     private TextView ratingLabel;
     private View view;
     private boolean rated = false, wishListed = false;
-
+    private String category,description,name;
     private SessionManager sessionManager;
 
-    public PlaceFragment() {
+    public Information() {
     }
 
-    public PlaceFragment(String name, String imageurl) {
-        this.imageurl = imageurl;
+    public Information(String name) {
         this.name = name;
     }
 
-    public static PlaceFragment newInstance(String param1, String param2) {
-        PlaceFragment fragment = new PlaceFragment();
+    public static Information newInstance(String param1, String param2) {
+        Information fragment = new Information();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -80,25 +69,18 @@ public class PlaceFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
         sessionManager = new SessionManager(getContext());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_place, container, false);
+        View view = inflater.inflate(R.layout.fragment_information, container, false);
         this.view = view;
 
         ratingLabel = ((TextView)view.findViewById(R.id.rating_label));
-
-        ImageView image = view.findViewById(R.id.placelistimage);
-        CollapsingToolbarLayout title = view.findViewById(R.id.collapsingbar);
         TextView catLabel = view.findViewById(R.id.place_cat_label);
         TextView descLabel = view.findViewById(R.id.place_desc_label);
-
-        title.setTitle(name);
-        Glide.with(getContext()).load(imageurl).into(image);
 
         if (!sessionManager.checkLogin()) {
             view.findViewById(R.id.comment_box_view).setVisibility(View.GONE);
@@ -112,7 +94,7 @@ public class PlaceFragment extends Fragment {
                 public void onSuccess(DataSnapshot dataSnapshot) {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         Map<String, Object> ratedPlace = (Map<String, Object>) data.getValue();
-                        if (ratedPlace.get("place").toString().equals(PlaceFragment.this.name)) {
+                        if (ratedPlace.get("place").toString().equals(Information.this.name)) {
                             rated = true;
                             long rating = (long)ratedPlace.get("rating");
 
@@ -142,7 +124,7 @@ public class PlaceFragment extends Fragment {
             FirebaseDatabase.getInstance().getReference("Users/" + userId + "/wishList").get().addOnSuccessListener(dataSnapshot -> {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Map<String, Object> wishListedPlace = (Map<String, Object>) data.getValue();
-                    if (wishListedPlace.get("place").toString().equals(PlaceFragment.this.name)) {
+                    if (wishListedPlace.get("place").toString().equals(Information.this.name)) {
                         wishListed = true;
                         ((ImageView) view.findViewById(R.id.wishlist_image)).setImageResource(R.drawable.wishlist_active);
                     }
@@ -305,10 +287,9 @@ public class PlaceFragment extends Fragment {
 
         return view;
     }
-
     private void addToWishList() {
         if (sessionManager.checkLogin() && !wishListed) {
-            
+
             Map<String, String> userDetails = sessionManager.getUserDetail();
             String userId = userDetails.get("name");
 

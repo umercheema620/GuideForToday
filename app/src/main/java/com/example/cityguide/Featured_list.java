@@ -8,9 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.cityguide.HomeAdaptors.Places.PlacesAdaptor;
+import com.example.cityguide.HomeAdaptors.Featured.FeaturedHelperClass;
 import com.example.cityguide.HomeAdaptors.Places.PlacesAdaptor2;
-import com.example.cityguide.HomeAdaptors.Places.PlacesHelperClass;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -31,11 +30,11 @@ public class Featured_list extends AppCompatActivity {
         latitude = getIntent().getDoubleExtra("latitude",0);
         longitude = getIntent().getDoubleExtra("longitude",0);
 
-        FirebaseRecyclerOptions<PlacesHelperClass> options =
-                new FirebaseRecyclerOptions.Builder<PlacesHelperClass>()
-                        .setQuery(FirebaseDatabase.getInstance().getReference().child("Places"),PlacesHelperClass.class)
+        FirebaseRecyclerOptions<FeaturedHelperClass> options =
+                new FirebaseRecyclerOptions.Builder<FeaturedHelperClass>()
+                        .setQuery(FirebaseDatabase.getInstance().getReference().child("Places"),FeaturedHelperClass.class)
                         .build();
-        PlaceListAdaptor = new PlacesAdaptor2(options,latitude,longitude);
+        PlaceListAdaptor = new PlacesAdaptor2(options,latitude,longitude,Featured_list.this);
         PlaceList.setAdapter(PlaceListAdaptor);
     }
 

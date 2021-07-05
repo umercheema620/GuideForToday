@@ -1,5 +1,7 @@
 package com.example.cityguide.HomeAdaptors.MostViewed;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.cityguide.PlaceFragment;
+import com.example.cityguide.HomeAdaptors.Featured.FeaturedHelperClass;
+import com.example.cityguide.PlaceData;
 import com.example.cityguide.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -24,19 +27,20 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 
-public class MostViewedAdapter extends FirebaseRecyclerAdapter<MostViewedHelperClass, MostViewedAdapter.myviewholder> {
+public class MostViewedAdapter extends FirebaseRecyclerAdapter<FeaturedHelperClass, MostViewedAdapter.myviewholder> {
     int year,month,day;
-
-    public MostViewedAdapter(@NonNull FirebaseRecyclerOptions<MostViewedHelperClass> options,int year,int month,int day) {
+    Context context;
+    public MostViewedAdapter(@NonNull FirebaseRecyclerOptions<FeaturedHelperClass> options,int year,int month,int day, Context context) {
         super(options);
         this.year = year;
         this.month = month;
         this.day = day;
+        this.context = context;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    protected void onBindViewHolder(@NonNull myviewholder holder, int position, @NonNull MostViewedHelperClass model) {
+    protected void onBindViewHolder(@NonNull myviewholder holder, int position, @NonNull FeaturedHelperClass model) {
         LocalDate current = LocalDate.of(this.year,this.month,this.day);
         LocalDate placedate = LocalDate.of(model.getYear(),model.getMonth(),model.getDay());
 
@@ -51,8 +55,13 @@ public class MostViewedAdapter extends FirebaseRecyclerAdapter<MostViewedHelperC
         Glide.with(holder.Placesimage.getContext()).load(model.getImageUrl()).into(holder.Placesimage);
 
         holder.itemView.setOnClickListener(view -> {
-            AppCompatActivity activity = (AppCompatActivity) view.getContext();
-            activity.getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout,new PlaceFragment(model.getName(),model.getImageUrl())).addToBackStack(null).commit();
+            Intent intent = new Intent(context, PlaceData.class);
+            intent.putExtra("name",model.getName());
+            intent.putExtra("image", model.getImageUrl());
+            intent.putExtra("category", model.getCategory());
+            intent.putExtra("latitude",model.getLatitude());
+            intent.putExtra("longitude",model.getLongitude());
+            context.startActivity(intent);
         });
     }
 

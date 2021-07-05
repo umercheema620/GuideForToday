@@ -6,10 +6,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
-import com.example.cityguide.HomeAdaptors.Featured.FeaturedAdaptor;
 import com.example.cityguide.HomeAdaptors.Featured.FeaturedHelperClass;
 import com.example.cityguide.HomeAdaptors.Places.PlacesAdaptor;
-import com.example.cityguide.HomeAdaptors.Places.PlacesHelperClass;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -34,11 +32,11 @@ public class place_list extends AppCompatActivity {
         latitude = getIntent().getDoubleExtra("latitude",0);
         longitude = getIntent().getDoubleExtra("longitude",0);
 
-        FirebaseRecyclerOptions<PlacesHelperClass> options =
-                new FirebaseRecyclerOptions.Builder<PlacesHelperClass>()
-                        .setQuery(FirebaseDatabase.getInstance().getReference("Places").orderByChild("category").equalTo(comingfrom), PlacesHelperClass.class)
+        FirebaseRecyclerOptions<FeaturedHelperClass> options =
+                new FirebaseRecyclerOptions.Builder<FeaturedHelperClass>()
+                        .setQuery(FirebaseDatabase.getInstance().getReference("Places").orderByChild("category").equalTo(comingfrom), FeaturedHelperClass.class)
                         .build();
-        PlaceListAdaptor = new PlacesAdaptor(options,latitude,longitude);
+        PlaceListAdaptor = new PlacesAdaptor(options,latitude,longitude,place_list.this);
         PlaceList.setAdapter(PlaceListAdaptor);
     }
 

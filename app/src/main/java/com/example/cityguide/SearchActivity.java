@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -75,7 +76,13 @@ public class SearchActivity extends AppCompatActivity {
 
                 view.setClickable(true);
                 view.setOnClickListener(v -> {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.search_layout,new PlaceFragment(placeMap.get("name").toString(), placeMap.get("imageUrl").toString())).addToBackStack(null).commit();
+                    Intent intent = new Intent(getApplicationContext(), PlaceData.class);
+                    intent.putExtra("name",placeMap.get("name").toString());
+                    intent.putExtra("image", placeMap.get("imageUrl").toString());
+                    intent.putExtra("category", placeMap.get("category").toString());
+                    intent.putExtra("latitude", placeMap.get("latitude").toString());
+                    intent.putExtra("longitude", placeMap.get("longitude").toString());
+                    startActivity(intent);
                 });
 
                 view.setVisibility(View.GONE);

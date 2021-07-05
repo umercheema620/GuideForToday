@@ -15,10 +15,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".User.ChatBot"></activity>
+        <activity android:name=".PlaceData"></activity>
+        <activity android:name=".User.ReviewPlaceData" />
+        <activity android:name=".User.Notification" />
+        <activity android:name=".User.ChatBot" />
         <activity android:name=".Common.Directions" />
         <activity android:name=".SearchActivity" />
-        <activity android:name=".Search" />
         <activity android:name=".Featured_list" />
         <activity android:name=".User.ChangePhone" />
         <activity android:name=".User.ChangeEmail" />
