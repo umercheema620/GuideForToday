@@ -21,10 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.cityguide.User.EventDetails;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,9 +36,11 @@ public class PlaceData extends AppCompatActivity implements LocationListener {
     CollapsingToolbarLayout name2;
     ChipNavigationBar mChipNavigationBar;
     String name, category, address, lat, lang;
+    int placeorevent;
     double latitude, longitude;
     double latitude1,longitude1;
     LocationManager mLocationManager;
+    ArrayList<String> lessthan10 = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +50,21 @@ public class PlaceData extends AppCompatActivity implements LocationListener {
         placeimage = findViewById(R.id.placeimage);
         name2 = findViewById(R.id.collapsingbar);
         mChipNavigationBar = findViewById(R.id.chipnav);
+        placeorevent = getIntent().getIntExtra("EventorPlace",0);
         name = getIntent().getStringExtra("name");
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new Information(name)).commit();
+        if(placeorevent == 1) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new Information(name)).commit();
+        }else if(placeorevent == 2){
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new EventDetails(name)).commit();
+        }
         bottomMenu();
 
         String image = getIntent().getStringExtra("image");
         category = getIntent().getStringExtra("category");
         lat = getIntent().getStringExtra("latitude");
         lang = getIntent().getStringExtra("longitude");
+        lessthan10 = getIntent().getStringArrayListExtra("list");
+        System.out.println(lessthan10);
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         Criteria cri = new Criteria();
@@ -94,8 +105,14 @@ public class PlaceData extends AppCompatActivity implements LocationListener {
                 Fragment fragment = null;
                 switch (i){
                     case R.id.bottom_nav_highligt:
-                        fragment = new Information(name);
-                        break;
+                        if(placeorevent == 1){
+                            fragment = new Information(name);
+                            break;
+                        }else if(placeorevent == 2){
+                            fragment = new EventDetails(name);
+                            break;
+                        }
+
                     case R.id.bottom_nav_info:
                         fragment = new Highlights(name,address,category,latitude,longitude,latitude1,longitude1);
                         break;

@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.cityguide.Database.PlaceHelperClass;
 import com.example.cityguide.HomeAdaptors.Featured.FeaturedHelperClass;
 import com.example.cityguide.PlaceData;
 import com.example.cityguide.R;
@@ -21,17 +25,20 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 public class PlacesAdaptor extends FirebaseRecyclerAdapter<FeaturedHelperClass,PlacesAdaptor.myviewholder> {
 
     double latitude,longitude;
     Context context;
+    ArrayList<String> lessthan10 = new ArrayList<>();
     public PlacesAdaptor(@NonNull FirebaseRecyclerOptions<FeaturedHelperClass> options,double latitude, double longitude,Context context) {
         super(options);
         this.latitude = latitude;
         this.longitude = longitude;
         this.context = context;
     }
+
 
     @Override
     protected void onBindViewHolder(@NonNull myviewholder holder, int position, @NonNull FeaturedHelperClass model) {
@@ -57,6 +64,10 @@ public class PlacesAdaptor extends FirebaseRecyclerAdapter<FeaturedHelperClass,P
         double value = (6366000 * tt)/1000;
         String value2 = df.format(value);
 
+        if(Double.parseDouble(value2) <= 10){
+            lessthan10.add(model.getName());
+        }
+
         holder.Placedistance.setText(value2);
         holder.Placestitle.setText(model.getName());
         holder.Placesdesc.setText(model.getDescription());
@@ -67,8 +78,10 @@ public class PlacesAdaptor extends FirebaseRecyclerAdapter<FeaturedHelperClass,P
             intent.putExtra("name",model.getName());
             intent.putExtra("image", model.getImageUrl());
             intent.putExtra("category", model.getCategory());
+            intent.putExtra("EventorPlace",1);
             intent.putExtra("latitude",model.getLatitude());
             intent.putExtra("longitude",model.getLongitude());
+            intent.putExtra("list",lessthan10);
             context.startActivity(intent);
         });
     }

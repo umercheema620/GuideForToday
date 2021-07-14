@@ -30,6 +30,7 @@ import java.time.temporal.ChronoUnit;
 public class MostViewedAdapter extends FirebaseRecyclerAdapter<FeaturedHelperClass, MostViewedAdapter.myviewholder> {
     int year,month,day;
     Context context;
+    long days;
     public MostViewedAdapter(@NonNull FirebaseRecyclerOptions<FeaturedHelperClass> options,int year,int month,int day, Context context) {
         super(options);
         this.year = year;
@@ -43,22 +44,28 @@ public class MostViewedAdapter extends FirebaseRecyclerAdapter<FeaturedHelperCla
     protected void onBindViewHolder(@NonNull myviewholder holder, int position, @NonNull FeaturedHelperClass model) {
         LocalDate current = LocalDate.of(this.year,this.month,this.day);
         LocalDate placedate = LocalDate.of(model.getYear(),model.getMonth(),model.getDay());
+        days = ChronoUnit.DAYS.between(placedate,current);
 
-        long days = ChronoUnit.DAYS.between(placedate,current);
-        System.out.println(days);
-        if(days <= 3) {
-            holder.newSpotCard.setVisibility(View.VISIBLE);
-        }
         holder.Placestitle.setText(model.getName());
         holder.Placesdesc.setText(model.getDescription());
         holder.mRatingBar.setRating(model.getRating());
         Glide.with(holder.Placesimage.getContext()).load(model.getImageUrl()).into(holder.Placesimage);
+
+
+
+        if(days < 3) {
+            System.out.println(days);
+            holder.newSpotCard.setVisibility(View.VISIBLE);
+        }else{
+            holder.newSpotCard.setVisibility(View.GONE);
+        }
 
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(context, PlaceData.class);
             intent.putExtra("name",model.getName());
             intent.putExtra("image", model.getImageUrl());
             intent.putExtra("category", model.getCategory());
+            intent.putExtra("EventorPlace",1);
             intent.putExtra("latitude",model.getLatitude());
             intent.putExtra("longitude",model.getLongitude());
             context.startActivity(intent);

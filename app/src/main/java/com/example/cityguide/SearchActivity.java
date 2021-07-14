@@ -80,6 +80,7 @@ public class SearchActivity extends AppCompatActivity {
                     intent.putExtra("name",placeMap.get("name").toString());
                     intent.putExtra("image", placeMap.get("imageUrl").toString());
                     intent.putExtra("category", placeMap.get("category").toString());
+                    intent.putExtra("EventorPlace",1);
                     intent.putExtra("latitude", placeMap.get("latitude").toString());
                     intent.putExtra("longitude", placeMap.get("longitude").toString());
                     startActivity(intent);

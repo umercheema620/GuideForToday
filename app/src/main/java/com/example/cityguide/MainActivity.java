@@ -20,6 +20,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.GradientDrawable;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -45,6 +46,8 @@ import com.example.cityguide.Common.LoginSignup.WelcomeScreen;
 import com.example.cityguide.Database.SessionManager;
 import com.example.cityguide.HomeAdaptors.Categories.CategoriesAdaptor;
 import com.example.cityguide.HomeAdaptors.Categories.CategoriesHelperClass;
+import com.example.cityguide.HomeAdaptors.Events.EventAdaptor;
+import com.example.cityguide.HomeAdaptors.Events.EventHelperClass;
 import com.example.cityguide.HomeAdaptors.Featured.FeaturedAdaptor;
 import com.example.cityguide.HomeAdaptors.Featured.FeaturedHelperClass;
 import com.example.cityguide.HomeAdaptors.MostViewed.MostViewedAdapter;
@@ -74,9 +77,10 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LocationListener {
 
-    RecyclerView featuredRecyclerView, mostViewedRecyclerView, categoriesRecyclerView;
+    RecyclerView featuredRecyclerView, mostViewedRecyclerView, categoriesRecyclerView,EventRecycler;
     RecyclerView.Adapter adapter;
     MostViewedAdapter Madaptor;
+    EventAdaptor Eadaptor;
     FeaturedAdaptor Fadaptor;
     DatabaseReference placeadded;
     ImageView menuIcon;
@@ -84,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     double latitude, longitude;
     LocationManager mLocationManager;
     private LinearLayout wishListHolder;
-    String count;
 
 
     public boolean isPermissionGranted;
@@ -100,34 +103,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         //Hooks
         featuredRecyclerView = findViewById(R.id.featured_recycler);
         mostViewedRecyclerView = findViewById(R.id.most_viewed_recycler);
         categoriesRecyclerView = findViewById(R.id.categories_recyclerView);
+        EventRecycler = findViewById(R.id.event_recycler);
         menuIcon = findViewById(R.id.menu_icon);
         contentView = findViewById(R.id.content);
         placeadded = FirebaseDatabase.getInstance().getReference("Places");
         wishListHolder = findViewById(R.id.wish_list_holder);
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        checkAppPermission();
 
         SessionManager sessionManager = new SessionManager(getApplicationContext());
-
-        mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-        List<String> providers = mLocationManager.getProviders(true);
-        Location bestLocation = null;
-        for (String provider : providers) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            }
-            Location l = mLocationManager.getLastKnownLocation(provider);
-            if (l == null) {
-                continue;
-            }
-            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                // Found best last known location: %s", l);
-                bestLocation = l;
-            }
-        }
-        onLocationChanged(bestLocation);
 
         if (sessionManager.checkLogin()) {
 
@@ -174,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 intent.putExtra("name",place.get("name").toString());
                                 intent.putExtra("image", place.get("imageUrl").toString());
                                 intent.putExtra("category", place.get("category").toString());
+                                intent.putExtra("EventorPlace",1);
                                 intent.putExtra("latitude", place.get("latitude").toString());
                                 intent.putExtra("longitude", place.get("longitude").toString());
                                 startActivity(intent);
@@ -200,10 +190,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             showCustomDialog();
         }
 
-        checkAppPermission();
-
-        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
         findViewById(R.id.search_bar_layout).setOnClickListener(v -> {
             startActivity(new Intent(this, SearchActivity.class));
         });
@@ -214,48 +200,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mostViewedRecycler();
         featuredRecycler();
         CategoriesRecycler();
+        eventRecycler();
 
-//        placeadded.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                PlaceHelperClass placeaddNot = snapshot.getValue(PlaceHelperClass.class);
-//                String userid = placeaddNot.getUser();
-//                SessionManager session = new SessionManager(MainActivity.this);
-//                if(userid != null && session.checkLogin()) {
-//                    String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
-//
-//                    Remember2 session1 = new Remember2(MainActivity.this);
-//                    count = session1.getDetail();
-//                    if(count != null) {
-//                        if (user.equals(userid) && count.equals("0")) {
-//                            notification();
-//                            count = "1";
-//                            session1.createRememberSession(count);
-//                        }
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
+        if(isPermissionGranted) {
+
+            Criteria cri = new Criteria();
+            String provider = mLocationManager.getBestProvider(cri, false);
+            if (provider != null && !provider.equals("")) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                Location location1 = mLocationManager.getLastKnownLocation(provider);
+                mLocationManager.requestLocationUpdates(provider, 2000, 1, this);
+                if (location1 != null) {
+                    onLocationChanged(location1);
+                } else {
+                    Toast.makeText(this, "location not found", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "Provider null", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
+
+    private void eventRecycler() {
+        EventRecycler.setHasFixedSize(true);
+        EventRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        FirebaseRecyclerOptions<EventHelperClass> options =
+                new FirebaseRecyclerOptions.Builder<EventHelperClass>()
+                        .setQuery(FirebaseDatabase.getInstance().getReference().child("Events"),EventHelperClass.class)
+                        .build();
+        Eadaptor = new EventAdaptor(options,MainActivity.this);
+        EventRecycler.setAdapter(Eadaptor);
     }
 
     private void notification() {
@@ -400,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         featuredRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         FirebaseRecyclerOptions<FeaturedHelperClass> options =
                 new FirebaseRecyclerOptions.Builder<FeaturedHelperClass>()
-                .setQuery(FirebaseDatabase.getInstance().getReference().child("Places"),FeaturedHelperClass.class)
+                .setQuery(FirebaseDatabase.getInstance().getReference().child("Places").orderByChild("featured").equalTo(true),FeaturedHelperClass.class)
                 .build();
         Fadaptor = new FeaturedAdaptor(options,MainActivity.this);
         featuredRecyclerView.setAdapter(Fadaptor);
@@ -411,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onStart();
         Madaptor.startListening();
         Fadaptor.startListening();
+        Eadaptor.startListening();
     }
 
     @Override
@@ -418,6 +396,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onStop();
         Madaptor.stopListening();
         Fadaptor.stopListening();
+        Eadaptor.stopListening();
     }
 
 
@@ -536,6 +515,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         intent.putExtra("latitude",latitude);
         intent.putExtra("longitude",longitude);
         startActivity(intent);
+    }
+
+    public void ViewAll(View view) {
     }
 
     private class LoadImageURL extends AsyncTask<String, Void, Bitmap> {

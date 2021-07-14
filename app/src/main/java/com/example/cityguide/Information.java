@@ -89,34 +89,31 @@ public class Information extends Fragment {
         }
         else {
             String userId = sessionManager.getUserDetail().get("name");
-            FirebaseDatabase.getInstance().getReference("Users/" + userId + "/ratedPlaces").get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
-                @Override
-                public void onSuccess(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        Map<String, Object> ratedPlace = (Map<String, Object>) data.getValue();
-                        if (ratedPlace.get("place").toString().equals(Information.this.name)) {
-                            rated = true;
-                            long rating = (long)ratedPlace.get("rating");
+            FirebaseDatabase.getInstance().getReference("Users/" + userId + "/ratedPlaces").get().addOnSuccessListener(dataSnapshot -> {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Map<String, Object> ratedPlace = (Map<String, Object>) data.getValue();
+                    if (ratedPlace.get("place").toString().equals(Information.this.name)) {
+                        rated = true;
+                        long rating = (long)ratedPlace.get("rating");
 
-                            ratingLabel.setText(Float.toString(rating));
-                            if (rating > 0) {
-                                ((ImageView)view.findViewById(R.id.star_image_1)).setImageResource(R.drawable.star_active);
-                            }
-                            if (rating > 1) {
-                                ((ImageView)view.findViewById(R.id.star_image_2)).setImageResource(R.drawable.star_active);
-                            }
-                            if (rating > 2) {
-                                ((ImageView)view.findViewById(R.id.star_image_3)).setImageResource(R.drawable.star_active);
-                            }
-                            if (rating > 3) {
-                                ((ImageView)view.findViewById(R.id.star_image_4)).setImageResource(R.drawable.star_active);
-                            }
-                            if (rating > 4) {
-                                ((ImageView)view.findViewById(R.id.star_image_5)).setImageResource(R.drawable.star_active);
-                            }
-
-                            break;
+                        ratingLabel.setText(Float.toString(rating));
+                        if (rating > 0) {
+                            ((ImageView)view.findViewById(R.id.star_image_1)).setImageResource(R.drawable.star_active);
                         }
+                        if (rating > 1) {
+                            ((ImageView)view.findViewById(R.id.star_image_2)).setImageResource(R.drawable.star_active);
+                        }
+                        if (rating > 2) {
+                            ((ImageView)view.findViewById(R.id.star_image_3)).setImageResource(R.drawable.star_active);
+                        }
+                        if (rating > 3) {
+                            ((ImageView)view.findViewById(R.id.star_image_4)).setImageResource(R.drawable.star_active);
+                        }
+                        if (rating > 4) {
+                            ((ImageView)view.findViewById(R.id.star_image_5)).setImageResource(R.drawable.star_active);
+                        }
+
+                        break;
                     }
                 }
             });
@@ -132,7 +129,7 @@ public class Information extends Fragment {
             });
         }
 
-        LinearLayout commentsHolder = (LinearLayout) view.findViewById(R.id.comments_holder);
+        LinearLayout commentsHolder = view.findViewById(R.id.comments_holder);
 
         // load comments
         FirebaseDatabase.getInstance().getReference("Places/" + this.name + "/comments").get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {

@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PlaceData"></activity>
+        <activity android:name=".User.EventData"></activity>
+        <activity android:name=".PlaceData" />
         <activity android:name=".User.ReviewPlaceData" />
         <activity android:name=".User.Notification" />
         <activity android:name=".User.ChatBot" />

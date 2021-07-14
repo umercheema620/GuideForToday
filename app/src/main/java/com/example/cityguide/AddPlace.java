@@ -78,6 +78,7 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
     String location, placename, placecategory, placedescription, placename1, placecategory1, placedescription1, lat1="31.468578", lang1="74.8475783", userid;
     ImageView image;
     Uri imageuri;
+    boolean featured;
     StorageReference storageReference;
     ProgressBar progressBar;
     private DatabaseReference rootNode = FirebaseDatabase.getInstance().getReference("Review");
@@ -108,6 +109,7 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
         location = getIntent().getStringExtra("locationP");
         lat1 = getIntent().getStringExtra("latitude");
         lang1 = getIntent().getStringExtra("longitude");
+        featured = false;
         editplaceN = findViewById(R.id.editplacename);
         editplaceD = findViewById(R.id.editplacedesc);
         editplaceC = findViewById(R.id.add_category);
@@ -232,14 +234,13 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
                         String value2 = df.format(value);
 
                         if(Double.parseDouble(value2) <= 10){
+                            System.out.println(featured);
                             StorageReference image = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageuri));
                             image.putFile(imageuri).addOnSuccessListener(taskSnapshot -> image.getDownloadUrl().addOnSuccessListener(uri ->{
-                                PlaceHelperClass AddNewUser = new PlaceHelperClass(placename,placedescription,uri.toString(),placecategory,location,lat1,lang1,userid,year,month,date,approve,disapprove,voted);
+                                PlaceHelperClass AddNewUser = new PlaceHelperClass(placename,placedescription,uri.toString(),placecategory,location,lat1,lang1,userid,year,month,date,approve,disapprove,voted,featured);
                                 notification.child(uid).child("notification").child(placename).setValue(AddNewUser);
                             }));
                         }
-
-                        System.out.println("Distance" + i + ":" + value2);
                     }
                 }
             }
@@ -255,7 +256,7 @@ public class AddPlace extends AppCompatActivity implements LocationListener {
         String count = "0";
         StorageReference image = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageuri));
         image.putFile(imageuri).addOnSuccessListener(taskSnapshot -> image.getDownloadUrl().addOnSuccessListener(uri -> {
-            PlaceHelperClass AddNewUser = new PlaceHelperClass(placename,placedescription,uri.toString(),placecategory,location,lat1,lang1,userid,year,month,date,approve,disapprove,voted);
+            PlaceHelperClass AddNewUser = new PlaceHelperClass(placename,placedescription,uri.toString(),placecategory,location,lat1,lang1,userid,year,month,date,approve,disapprove,voted,featured);
             rootNode.child(placename).setValue(AddNewUser);
             Toast.makeText(AddPlace.this, "Uploaded Successfully", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(getApplicationContext(),MainActivity.class));

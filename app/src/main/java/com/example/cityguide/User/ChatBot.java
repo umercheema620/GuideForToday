@@ -10,7 +10,7 @@ import com.example.cityguide.R;
 
 public class ChatBot extends AppCompatActivity {
 
-    private static final String CHAT_BOT_URL = "https://console.dialogflow.com/api-client/demo/embedded/032315ed-2f04-4bac-83ce-f1f2b24a1123";
+    private static final String CHAT_BOT_URL = "https://console.dialogflow.com/api-client/demo/embedded/d6b641d4-ec87-4902-84cc-829a563421fd";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

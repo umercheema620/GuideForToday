@@ -6,6 +6,7 @@ public class PlaceHelperClass {
     private String name,category,location,imageUrl,description, latitude,longitude,user;
     private int year,month,day;
     public int approve,disapprove,voted;
+    boolean featured;
 
     public String getLatitude() {
         return latitude;
@@ -25,7 +26,7 @@ public class PlaceHelperClass {
 
     public PlaceHelperClass(){}
 
-    public PlaceHelperClass(String name, String description,String imageUrl,String category, String location, String latitude, String longitude,String user, int year, int month, int day,int approve, int disapprove, int voted) {
+    public PlaceHelperClass(String name, String description,String imageUrl,String category, String location, String latitude, String longitude,String user, int year, int month, int day,int approve, int disapprove, int voted, boolean featured) {
         this.name = name;
         this.category = category;
         this.location = location;
@@ -40,6 +41,15 @@ public class PlaceHelperClass {
         this.approve = approve;
         this.disapprove = disapprove;
         this.voted = voted;
+        this.featured = featured;
+    }
+
+    public boolean isFeatured() {
+        return featured;
+    }
+
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
     }
 
     public int getApprove() {
